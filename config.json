@@ -1,0 +1,46 @@
+{
+    "run_type": "tvm",
+    "onnx_hub": {
+        "activate": true,
+        "start": 0,
+        "end": 200
+    },
+    "tvm": {
+        "devices": {
+            "id": 0,
+            "selected": "default",
+            "default": {
+                "key": "android",
+                "host_type": "default",
+                "target": "opencl",
+                "target_framework": "opencl",
+                "host": "llvm -mtriple=arm64-linux-android",
+                "address": "0.0.0.0",
+                "port": 9092
+            }
+        }
+    },
+    "onnx": {
+        "threshold": 0,
+        "preprocess_model": false,
+        "quantize_static": false
+    },
+    "options": {
+        "testing": "disable_preprocessing torch",
+        "preprocessing_setting": "imagenet",
+        "nodes_to_exclude": [],
+        "skipped_nodes": []
+    },
+    "images": {
+        "images_folder_rel_path": "/images/imagenet/",
+        "calibration_images_rel_path": "/images/thirty/",
+        "small_calibr_images_folder_rel_path": "/images/ten/",
+        "random_enabled": true,
+        "random_k": 300,
+        "chunk": 150
+    },
+    "visualizer": {
+        "labels": ["Dissimilarity", "Size", "Execution Time"],
+        "active_labels":[true, true, false]
+    }
+}
