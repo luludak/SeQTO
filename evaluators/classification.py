@@ -31,7 +31,6 @@ class Evaluator:
             }
         }
 
-
     def evaluate(self, original_file_path, mutant_file_path):
 
         original_obj, lines_no, original_first_line, exec_time1 = self.file_to_object(original_file_path)
@@ -86,7 +85,6 @@ class Evaluator:
         if (not os.path.exists(original_file_path) or not os.path.exists(mutant_file_path)):
             return False
 
-
         original_obj, lines_no, original_first_line, exec_time1 = self.file_to_object(original_file_path)
         mutant_obj, mutant_lines_no, mutant_first_line, exec_time2 = self.file_to_object(mutant_file_path)
 
@@ -137,6 +135,5 @@ class Evaluator:
             elif(count == self.topK + 1):
                 exec_time = float(line)
             count += 1
-
 
         return obj, order - 1, first_class, exec_time

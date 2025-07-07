@@ -5,7 +5,6 @@ from os import listdir
 from os.path import isfile, isdir, join, exists
 import fnmatch
 from evaluators.classification import Evaluator
-import statistics
 from scipy import stats
 import math
 import numpy as np
@@ -34,7 +33,6 @@ class EvaluationGenerator:
         
         # If problematic occurences over threshold, mark as problematic.
         return problematic_count
-
 
     def generate_base_folder_comparison(self, model_names, base_folder, mutations_folder):
 
@@ -111,11 +109,6 @@ class EvaluationGenerator:
                     }
                     total_avg_exec_time += evaluated_avg_time
                 comparisons[base][evaluated] = comparison_stats["comparison"]
-                # comparisons.append({
-                #     "base": base,
-                #     "evaluated": evaluated,
-                #     "comparison": comparison_stats["comparison"]
-                # })
 
                 for image_dissimilar in images_dissimilar:
                     if image_dissimilar not in total_images_dissimilar:
@@ -408,7 +401,7 @@ class EvaluationGenerator:
     # Generate tau comparison for images.
     def generate_objects_comparison(self, source_object, target_object):
 
-        # Loop images
+        # Loop images.
         # Run object comparison.
         # Count similar & Dissimilar, along with distances, in object.
         # Trick: not all source images should be at target, but if a target image
@@ -486,7 +479,6 @@ class EvaluationGenerator:
         images_similar_no = 0
         images_dissimilar = 0
         images_dissimilar_no = 0
-
 
         paths_to_check = [join(mutation_model_path, f) for f in image_txt_names]
         files_no_diff = abs(len(image_txt_names) - len(paths_to_check))
