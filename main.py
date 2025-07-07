@@ -70,7 +70,8 @@ def plot_by_non_domination_rank(X, orig_X, labels):
     for num_index in range(len(labels)):
         plt.plot(nums, X[:, num_index], color=palette[num_index], linewidth=3, label=labels[num_index])
 
-    plt.xlabel("Index")
+    plt.xlabel("Index", fontsize=14)
+    plt.ylabel("Normalized Range (%)", fontsize=14)
 
     nds = NonDominatedSorting()
     # TODO: Add weights in parameters for pareto.
@@ -84,9 +85,10 @@ def plot_by_non_domination_rank(X, orig_X, labels):
     ranking = np.argsort(distances)
     ranking_in_front = [e for e in ranking if e in front[0]]
 
-    threshold = 5
+    threshold = 3
     colors = [(0, 0, 0.5, alpha) for alpha in np.linspace(1, 0.3, threshold)]
 
+    pareto_fronts = []
     for i in range(len(ranking_in_front)):
         if i >= threshold:
             break
@@ -94,13 +96,22 @@ def plot_by_non_domination_rank(X, orig_X, labels):
         plt.axvline(x=ranking_in_front[i], color=colors[i], linestyle="--", label=f"Pareto #" + str(i + 1))
         print("Pareto " + str(i + 1))
         print("Version Index: " + str(ranking_in_front[i]))
+        pareto_front = {
+            "Pareto ID": str(i + 1),
+            "Version Index": str(ranking_in_front[i])
+        }
         for lb_i in range(len(labels)):
             print(labels[lb_i] + ": " + str(orig_X[ranking_in_front[i], lb_i]))
+            pareto_front[labels[lb_i]] = str(orig_X[ranking_in_front[i], lb_i])
+
+        pareto_fronts.append(pareto_front)
 
 
     plt.legend()
     plt.grid()
     plt.plot()
+    
+    return pareto_fronts
 
 def min_max_normalize_value(array, value, maximize=True, append_value_to_array=False):
     """
@@ -122,12 +133,12 @@ def min_max_normalize_value(array, value, maximize=True, append_value_to_array=F
     max_val = max(array)
 
     if max_val == min_val:
-        return 0.5  # or another default when no variation
+        return 50  # or another default when no variation
 
     if maximize:
-        return (value - min_val) / (max_val - min_val)
+        return ((value - min_val) / (max_val - min_val)) * 100
     else:
-        return (max_val - value) / (max_val - min_val)
+        return ((max_val - value) / (max_val - min_val)) * 100
 
 def normalize_objectives(data, maximize=[True, True, True]):
     """
@@ -151,11 +162,11 @@ def normalize_objectives(data, maximize=[True, True, True]):
 
         if max_val == min_val:
             # Avoid division by zero; set to 0.5 (or whatever constant you'd prefer)
-            normalized[:, i] = 0.5
+            normalized[:, i] = 50
         elif maximize[i]:
-            normalized[:, i] = (col - min_val) / (max_val - min_val)
+            normalized[:, i] = ((col - min_val) / (max_val - min_val)) * 100
         else:
-            normalized[:, i] = (max_val - col) / (max_val - min_val)
+            normalized[:, i] = ((max_val - col) / (max_val - min_val)) * 100
 
     return normalized
 
@@ -174,17 +185,12 @@ def main():
     parser.add_argument("-so", "--show_only", action="store_true",
         help="Visualize and show figures (no save).")
 
-    # Models to run from ONNX Model Repo:
-    #  10: MobileNetV2, ShuffleNet-v2, OK
-    #  11: EfficientNet-Lite4, OK
-    #  12: GoogleNet, Inception-1, MNIST, ResNet50-fp32 - OK
-    # Consider OD models. Use code from DiTOX to compare.
-
     args = parser.parse_args()
 
     script_dir = os.path.dirname(os.path.realpath(__file__))
     
-    # TODO: Move into separate class.
+    # TODO: Refactor - Move visualizer into separate class.
+    # This will be completed before tool publication.
     if args.visualize:
         labels = config["visualizer"]["labels"]
         active_labels = config["visualizer"]["active_labels"]
@@ -233,8 +239,9 @@ def main():
             #  and f.endswith(".json")
             json_files = [f for f in listdir(visualize_path) if isfile(join(visualize_path, f))]
             fig_count = 0
+            all_pareto_fronts = {}
             for json_file in json_files:
-                if not json_file.endswith(".json"):
+                if not json_file.endswith(".json") or json_file.endswith("summary.json"):
                     continue
 
                 json_file_path = join(visualize_path, json_file)
@@ -265,20 +272,29 @@ def main():
                 title = json_file.split("_", 1)[1].\
                              replace(".json", "").replace("_", " ").replace("out", "")
                 print(title)
-                fig.suptitle(title, fontsize=16)
+                # fig.suptitle(title, fontsize=16)
                 # plot_by_non_domination_rank(X, orig_X, labels)
-                plot_by_non_domination_rank(X, orig_X, [l for i, l in enumerate(labels) if active_labels[i]])
+                pareto_fronts = plot_by_non_domination_rank(X, orig_X, [l for i, l in enumerate(labels) if active_labels[i]])
+                all_pareto_fronts[title] = {
+                    "all_values": orig_X,
+                    "fronts": pareto_fronts
+                }
                 file_to_save = json_file_path.replace(".json", ".jpg")
                 # print(file_to_save)
-                plt.legend(loc='lower left') 
+                
+                plt.legend(loc='lower left', prop={'size': 14}) 
                 if not args.show_only:
                     plt.gcf().set_size_inches(14, 8)
-                    plt.savefig(file_to_save)
+                    plt.savefig(file_to_save, bbox_inches='tight')
+            out_json = json.dumps(all_pareto_fronts, indent=2)
+            with open(visualize_path + "/summary.json", "w") as outfile:
+                outfile.write(out_json)
             if not args.show_only:
                 print("Figures generated in the same directory as the input file(s).")
             
             if not args.save_only:
                 plt.show()
+                
         return
 
     images_config = config["images"]
@@ -307,21 +323,26 @@ def main():
     models_to_run = []
     models_config = []
 
+    hub_config = config["onnx_hub"]
 
-    if config["onnx_hub"]["activate"]:
-        start = config["onnx_hub"]["start"]
-        end = config["onnx_hub"]["end"]
+    if hub_config["activate"]:
+        start = hub_config["start"]
+        end = hub_config["end"]
         all_models = hub.list_models()
         for i, model in enumerate(all_models):
 
             if i < start or i > end:
                 continue
             
-            # TODO: Refactor
-            # EfficientNet-Lite4 != ShuffleNet
-            # ResNet50-fp32 Tiny YOLOv3
-            if "EfficientNet-Lite4" != model.model or model.opset != 11:
-                continue
+            # For Example: models to run from ONNX Model Repo:
+            #  Opset 10: MobileNetV2, ShuffleNet-v2,
+            #  Opset 11: EfficientNet-Lite4,
+            #  Opset12: GoogleNet, Inception-1, MNIST, ResNet50-fp32
+            if hub_config["filter"]["enabled"]:
+                if hub_config["filter"]["name"] not in model.model or \
+                    ("opset" in hub_config["filter"] and \
+                    model.opset != int(hub_config["filter"]["opset"])):
+                    continue
 
             models_to_run.append(get_model_path(script_dir, model))
             print("MODEL: " + str(model.model) + " OPSET: " + str(model.opset))
@@ -368,7 +389,6 @@ def main():
         # We need to check manually.
 
         # TODO: Refactor.
-
         qdq_model_path = float_model_path.replace(".onnx", "_quant.onnx")
         model_config = models_config[i]
 
@@ -470,7 +490,6 @@ def main():
                 print ("Running original model from " + str(start) + " to " + str(end))
 
                 if run_type == "onnx":
-                    # print(shape)
                     result = onnx_runner.execute_onnx_model(onnx.load(float_pre_model_path), images_paths_chunk, config={
                         "input_name": model_config["input_name"],
                         "input_shape": shape,
@@ -507,12 +526,10 @@ def main():
                 outfile.write(out_json)
 
         total_dissimilar_percentage = 100
-        prev_dissimilar = 100
         threshold = config["onnx"]["threshold"]
         new_quant_model_path = qdq_model_path
         prev_quant_model_path = None
         
-        # float_model_hash = hashlib.md5(open(float_model_path,'rb').read()).hexdigest()
         all_dissimilarities = []
         quantized_benchmark = []
         quantized_sizes = []
@@ -535,7 +552,6 @@ def main():
             nodes_to_exclude = config["options"]["nodes_to_exclude"]
             skipped_nodes = config["options"]["skipped_nodes"]
 
-            # print(list(QuantFormat))
             quantize_static(
                 float_pre_model_path,
                 qdq_model_path,
@@ -546,10 +562,7 @@ def main():
                 nodes_to_exclude=nodes_to_exclude
             )
 
-            # Use original model to compare!
-
-            # TODO: Model quantizes, but the matching fails sometimes. In this case,
-            # skip matching, use arbitrary order and apply algorithm.
+            # Perform activation comparison.
             aug_float_model_path = _generate_aug_model_path(float_model_path)
             modify_model_output_intermediate_tensors(float_model_path, aug_float_model_path)
             small_input_data_reader.rewind()
@@ -581,20 +594,14 @@ def main():
                 norm_qdq_err = normalize_value(elem['qdq_err'], qdq_model_max, qdq_model_min)
                 act_error_new[key] = (0.5*norm_xerr + 0.5*norm_qdq_err)
 
-            # actlist = sorted(act_error.items(), key = lambda x: (-(x[1]['xmodel_err']), -int(x[1]['qdq_err'])))
             actlist = sorted(act_error_new.items(), key = lambda x: x[1],reverse=True)
-            # print(actlist)
 
             matched_weights = create_weight_matching(float_model_path, new_quant_model_path)
             weights_error = compute_weight_error(matched_weights)
             
-
             w_list = [x[1] for x in weights_error.items()]
-            # print(w_list)
             max_w_err = np.max(w_list)
             min_w_err = np.min(w_list)
-
-            # print(qdq_err_list)
 
             for key in weights_error:
                 elem = weights_error[key]
@@ -631,23 +638,12 @@ def main():
                 "quantized": quantized_sizes
             }
         }
-        # print(actlist)
 
-        # print("------------")
-
-        # print(wlist)
-        # actlist_keys = [x[0] for x in actlist]
-        # for item in wlist:
-        #     if item[0] not in actlist_keys:
-        #         actlist.append(item)
-
-        # actlist = sorted(actlist, key = lambda x: x[1], reverse=True)
         actlist = actlist + wlist
         print(actlist)
 
         while True:
 
-            #new_quant_model_path = new_quant_model_path.split("quant")[0] + "quant_" + str(time.time()) + ".onnx"
             new_node_found = None
             if os.path.exists(result_object_file):
                 new_node_found = append_node_to_exclude(onnx_runner, float_model, actlist, nodes_to_exclude)
@@ -658,7 +654,7 @@ def main():
 
             print("Building Quantized Model: " + new_quant_model_path)
             print(nodes_to_exclude)
-            #float_pre_model_path = float_model_path.replace(".onnx", "_pre.onnx")
+
             if not os.path.exists(float_pre_model_path):
                 try:
                     p = subprocess.Popen(['python3 -m onnxruntime.quantization.preprocess --input ' + float_model_path + " --output " + float_pre_model_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
@@ -701,6 +697,7 @@ def main():
                     skip_execution = True
 
             if not skip_execution:
+                
                 # Rebuild new TVM instance.
                 if run_type == "tvm":
                     tvm_path = os.path.dirname(new_quant_model_path)
@@ -765,23 +762,7 @@ def main():
                 quantized_sizes.append(get_size(new_quant_model_path))
 
                 print("Dissimilarity: " + str(dissimilar_percentage))
-                
-                # else:
-                #     node_out = nodes_to_exclude.pop()
-                #     print (node_out + " removed from list to ignore upon quantization.")
-                    
-                # prev_dissimilar = dissimilar_percentage
-                # print("benchmarking fp32 model...")
-                # benchmark(float_model_path, model_config)
 
-                # print("------------------------------------------------\n")
-                # print("benchmarking int8 model...")
-                # benchmark(qdq_model_path, model_config)
-
-                # quantize_dynamic(float_model_path, qdq_model_path, weight_type=QuantType.QUInt8)
-
-                # print("------------------------------------------------\n")
-                # print("Comparing weights of float model vs qdq model.....")
             
             prev_quant_model_path = new_quant_model_path.replace(".onnx", "_old.onnx")
             os.rename(new_quant_model_path, prev_quant_model_path)
@@ -805,9 +786,6 @@ def append_node_to_exclude(onnx_runner, float_model, actlist, nodes_to_exclude):
         node_name = item[0]
         nodes = onnx_runner.get_nodes_containing_input(float_model, node_name)
 
-        # if node_name == '':
-        #     print(item)
-
         if node_name not in nodes_to_exclude:
             nodes_to_exclude.append(node_name)
             print("New node found: " + node_name)
@@ -815,8 +793,7 @@ def append_node_to_exclude(onnx_runner, float_model, actlist, nodes_to_exclude):
         else:
             for node in nodes:
                 if node.name not in nodes_to_exclude:
-                    # if node.name == '':
-                    #     print(node)
+
                     print("New node found: " + node.name)
                     nodes_to_exclude.append(node.name)
                     return node.name
@@ -825,4 +802,3 @@ def append_node_to_exclude(onnx_runner, float_model, actlist, nodes_to_exclude):
 
 if __name__ == "__main__":
     main()
-

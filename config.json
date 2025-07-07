@@ -1,9 +1,14 @@
 {
-    "run_type": "tvm",
+    "run_type": "onnx",
     "onnx_hub": {
         "activate": true,
         "start": 0,
-        "end": 200
+        "end": 200,
+        "filter": {
+            "enabled": true,
+            "name": "MobileNet v2-1.0",
+            "opset": 10
+        }
     },
     "tvm": {
         "devices": {
@@ -33,14 +38,15 @@
     },
     "images": {
         "images_folder_rel_path": "/images/imagenet/",
-        "calibration_images_rel_path": "/images/thirty/",
-        "small_calibr_images_folder_rel_path": "/images/ten/",
+        "calibration_images_rel_path": "/images/fifty/",
+        "small_calibr_images_folder_rel_path": "/images/thirty/",
         "random_enabled": true,
         "random_k": 300,
-        "chunk": 150
+        "chunk": 300
     },
     "visualizer": {
         "labels": ["Dissimilarity", "Size", "Execution Time"],
         "active_labels":[true, true, false]
     }
+
 }
