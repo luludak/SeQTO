@@ -31,12 +31,12 @@
         "quantize_static": false
     },
     "options": {
-        "testing": "disable_preprocessing torch",
         "preprocessing_setting": "imagenet",
         "nodes_to_exclude": [],
         "skipped_nodes": []
     },
     "images": {
+        "note": "Download your own datasets and create your own images folders.",
         "images_folder_rel_path": "/images/imagenet/",
         "calibration_images_rel_path": "/images/fifty/",
         "small_calibr_images_folder_rel_path": "/images/thirty/",
