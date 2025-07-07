@@ -16,14 +16,13 @@ def benchmark(model_path, config={}):
     runs = 10
     shape = config["shape"] if "shape" in config else (1, 3, 224, 224)
     input_data = np.zeros(shape, np.float32)
-    # Warming up
     _ = session.run([], {input_name: input_data})
     for i in range(runs):
         start = time.perf_counter()
         _ = session.run([], {input_name: input_data})
         end = (time.perf_counter() - start) * 1000
         total += end
-        # print(f"{end:.2f}ms")
+
     total /= runs
     print(f"Avg: {total:.2f}ms")
     return total

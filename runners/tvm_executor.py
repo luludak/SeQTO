@@ -67,20 +67,12 @@ class Executor:
             target_framework = self.connection_data["target_framework"]
             self.device = tvm.device(str(target_framework), device_id)
             self.module = graph_executor.GraphModule(self.loaded_module["default"](self.device))
-            # with open(self.graph_path) as f:
-            #     self.json_str = f.read()
-            #     f.close()
-            
-            #     self.module_debug = GraphModuleDebug(
-            #                 self.loaded_module["debug_create"]("default", self.device),
-            #                 [self.device],
-            #                 self.json_str)
+
         else:
             remote.upload(self.model_path)
             graph = open(self.graph_path).read()
             params = bytearray(open(self.params_path, "rb").read())
             # TODO: Load Graph and Params.
-            # print("MODEL PATH: " + self.model_path)
             dir_path, lib_name = split(self.model_path)
             target_framework = self.connection_data["target_framework"]
             self.loaded_module = remote.load_module(lib_name)
@@ -88,14 +80,7 @@ class Executor:
             self.device = remote.device(target_framework, device_id)
 
             self.module = graph_executor.GraphModule(self.loaded_module["default"](self.device))
-            # with open(self.graph_path) as f:
-            #     self.json_str = f.read()
-            #     f.close()
-            
-            #     self.module_debug = GraphModuleDebug(
-            #                 self.loaded_module["debug_create"]("default", self.device),
-            #                 [self.device],
-            #                 self.json_str)
+
         return self
 
     def execute(self):
@@ -150,9 +135,6 @@ class Executor:
         output_object = {}
         exec_times = {}
 
-        # profile_result = self.module_debug.profile()
-        # print(profile_result)
-
         for image_name in image_names:
 
             if(count % step == 0):
@@ -179,7 +161,7 @@ class Executor:
             
             try:
                 start_timestamp = self.time.get_epoch_timestamp(False)
-                # print(img.shape)
+
                 self.module.set_input(self.input_name, img)
                 self.module.run()
                 out = tvm.nd.empty(self.output, device=self.device)
@@ -188,7 +170,7 @@ class Executor:
 
                 scores = softmax(tvm_output)
                 if(len(scores) > 2):
-                    squeeze(scores, [0, 2])
+                    scores = np.squeeze(scores, [0, 2])
 
                 scores = np.squeeze(scores)
                 ranks = np.argsort(scores, kind='stable')[::-1]

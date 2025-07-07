@@ -5,16 +5,10 @@ from __future__ import print_function
 import tensorflow as tf
 
 import numpy as np
-import math
 import onnxruntime as rt
-import cv2
-import json
-
 import importlib
-import tensorflow
-import tensorflow as tf
-from tensorflow import keras
 
+from tensorflow import keras
 from torchvision import transforms
 
 from .vgg_preprocessor import preprocess_image as vgg_preprocess_image
@@ -52,6 +46,7 @@ class ModelPreprocessor:
         # These libraries have the format of tf_to_keras
         # so I isolate "tf" and then I select preprocessing based on that.
         if("_to_" in library_or_name):
+
             # Remove library pre/postfix
             if "library_" in library_or_name:
                 library_or_name = library_or_name.replace("library_", "")
@@ -112,7 +107,7 @@ class ModelPreprocessor:
             img_tensor = img_tensor.unsqueeze(0)
             out_np_tensor = img_tensor.numpy()
             if ((self.data["input"][1] == 3 and out_np_tensor.shape[1] != 3 or (self.data["input"][1] != 3  and out_np_tensor.shape[1] == 3))):
-                # print("TRANSPOSING.")
+
                 out_np_tensor = np.transpose(out_np_tensor, (0, 2, 3, 1))
             return out_np_tensor
 
@@ -170,7 +165,7 @@ class ModelPreprocessor:
         img[0, 2,:, :] -= 103.939
         img[0, [0,1,2],:,:] = img[0, [2,1,0],:,:]
 
-        return img  # * 0.017
+        return img
 
     def preprocess_imagenet(self, img):
         mean_vec = np.array([0.485, 0.456, 0.406])

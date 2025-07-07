@@ -444,26 +444,15 @@ class EvaluationGenerator:
                 "p-value": image_evaluation["comparisons"]["kendalltau"]["p-value"],
             }
 
-            # TODO: Consider setting KT count heuristic for similar and dissimilar.
-
             print("tau", image_evaluation["comparisons"]["kendalltau"]["tau"])
 
             tau_norm_diss = 1 - self.map_to_0_1(image_evaluation["comparisons"]["kendalltau"]["tau"])
             tau_norms_diss.append(tau_norm_diss)
 
-            # if image_evaluation["comparisons"]["kendalltau"]["tau"] > 0.98:
-            #     #image_evaluation["comparisons"]["first_only"] == 1:
-            #     evaluation_object["similar"].append(image)
-            #     images_similar += 1
-            # else:
-            #     evaluation_object["dissimilar"].append(image)
-            #     images_dissimilar += 1
-
-        # and len(source_images) == len(target_images)
         if (len(source_images) != 0):
             tau_norms_diss_mean = np.mean(tau_norms_diss)
-            evaluation_object["percentage_similar"] = (1 - tau_norms_diss_mean) * 100#(len(evaluation_object["similar"])/len(target_images)) * 100
-            evaluation_object["percentage_dissimilar"] = tau_norms_diss_mean * 100#(len(evaluation_object["dissimilar"])/len(target_images)) * 100
+            evaluation_object["percentage_similar"] = (1 - tau_norms_diss_mean) * 100
+            evaluation_object["percentage_dissimilar"] = tau_norms_diss_mean * 100
         return evaluation_object
 
     def get_basic_evaluation(self, folder1_path, folder2_path, output_path_file="", include_individual_analysis=True, write_to_file=False, similar_images_max_no=10, dissimilar_images_max_no=10, max_no_of_diff_labels=0, verbose_time_data=False):
