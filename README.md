@@ -1,4 +1,4 @@
-# A SeQTO: Selective Quantization Tuner for ONNX Models
+# SeQTO: A Selective Quantization Tuner for ONNX Models
 SeQTO is a tool that allows DNN model quantization analysis, step-by-step selective quantization, and profiling.
 
 ## Installation
