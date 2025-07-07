@@ -1,6 +1,21 @@
 # SeQTO: A Selective Quantization Tuner for ONNX Models
-SeQTO is a tool for deep neural network (DNN) quantization analysis, enabling step-by-step selective quantization and profiling to identify the optimal quantized model. It supports the generation of selectively quantized models, deployment on CPUs (via ONNX Runtime) and GPUs (via Apache TVM), and evaluation across datasets. SeQTO also applies multi-objective Pareto Front analysis to guide the selection of the best quantization candidate.
+SeQTO is a tool for deep neural network (DNN) quantization analysis, enabling step-by-step selective quantization and profiling to identify the optimal quantized model. It supports the generation of selectively quantized models, deployment on CPUs (via `ONNX Runtime`) and GPUs (via `Apache TVM`), and evaluation across datasets. SeQTO also applies multi-objective Pareto Front analysis to guide the selection of the best quantization candidate.
 SeQTO allows the fetching of models via the ONNX Model hub of via local file. In addition, it supports the run of both static and dynamic quantization in the ONNX quantizer.
+
+![SeQTO](https://github.com/user-attachments/assets/06036a68-517c-403c-9334-74b15349d5f5)
+
+```
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Python                          17            619            287           1936
+JSON                             1              1              0             51
+Markdown                         1             10              0             23
+-------------------------------------------------------------------------------
+SUM:                            19            630            287           2010
+-------------------------------------------------------------------------------
+
+```
 
 ## Installation
 Install necessary packages using `pip`, by doing `pip install -r requirements.txt`.
