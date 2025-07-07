@@ -17,4 +17,3 @@ class ObjectsExecutor(Executor):
         print("Executing model " + self.model_name + ", execution timestamp: " + timestamp_str)
     
         return self.process_images_with_io(self.input_images_folders[0], "", self.model_name, "", specific_images, should_write_to_file=False)
-

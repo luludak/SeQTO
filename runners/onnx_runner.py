@@ -55,6 +55,7 @@ class ONNXRunner:
 
 
     def execute_onnx_model(self, onnx_model, images_paths, config, image_names=None, print_percentage=True, include_certainties=False):
+        
         # Execute and return all data.
         self.preprocessing_data = {
             "input": config["input_shape"],

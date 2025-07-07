@@ -176,9 +176,6 @@ class Executor:
                 ranks = np.argsort(scores, kind='stable')[::-1]
                 extracted_ranks = ranks[0:5]
 
-                # for rank in extracted_ranks:
-                #     print("%s, %f" % (rank, scores[rank]))
-
                 if(prev_ranks is not None and np.array_equal(prev_ranks, extracted_ranks)):
                     same_ranks += 1
                 else:
@@ -191,7 +188,7 @@ class Executor:
 
                 if (should_write_to_file):
                     with open(output_file_path, 'w') as output_file:
-                        # TOP-K of ranks, with K=5.
+
                         for rank in extracted_ranks:
                             print("%s, %f" % (rank, scores[rank]), file = output_file)
                         
