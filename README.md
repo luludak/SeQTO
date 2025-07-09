@@ -2,7 +2,7 @@
 SeQTO is a tool for deep neural network (DNN) quantization analysis, enabling step-by-step selective quantization and profiling to identify the optimal quantized model. It supports the generation of selectively quantized models, deployment on CPUs (via `ONNX Runtime`) and GPUs (via `Apache TVM`), and evaluation across datasets. SeQTO also applies multi-objective Pareto Front analysis to guide the selection of the best quantization candidate.
 SeQTO allows the fetching of models via the ONNX Model hub of via local file. In addition, it supports the run of both static and dynamic quantization in the ONNX quantizer.
 
-![SeQTO](https://github.com/user-attachments/assets/06036a68-517c-403c-9334-74b15349d5f5)
+![SeQTO](https://github.com/luludak/SeQTO/blob/main/SeQTO.png)
 
 ```
 -------------------------------------------------------------------------------
