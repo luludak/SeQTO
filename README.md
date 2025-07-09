@@ -4,18 +4,6 @@ SeQTO allows the fetching of models via the ONNX Model hub of via local file. In
 
 ![SeQTO](https://github.com/luludak/SeQTO/blob/main/SeQTO.png)
 
-```
--------------------------------------------------------------------------------
-Language                     files          blank        comment           code
--------------------------------------------------------------------------------
-Python                          17            619            287           1936
-JSON                             1              1              0             51
-Markdown                         1             10              0             23
--------------------------------------------------------------------------------
-SUM:                            19            630            287           2010
--------------------------------------------------------------------------------
-
-```
 
 In addition, SeQTO is able to visualize the results, highlighting objective minimization via Pareto Front.
 
@@ -49,6 +37,21 @@ The `images` object allows the definition of the dataset folder, along with the 
 in case the run is unstable (e.g., TVM RPC timeouts to a mobile device).
 
 You can also use the `onnx` object to configure (1) the desired accuracy `threshold` for the experiments to stop, (2) if additional ONNX `preprocessing` will be applied to the models (apart for the per-input pre-processing), and (3) whether the model should be statically quantized by setting the `quantize_static` property to `true`, or dynamically quantized by setting it to `false`.
+
+## Repository Information
+
+```
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Python                          17            619            287           1936
+JSON                             1              1              0             51
+Markdown                         1             10              0             23
+-------------------------------------------------------------------------------
+SUM:                            19            630            287           2010
+-------------------------------------------------------------------------------
+
+```
 
 ## Results
 The results of our experiments can be found in the `results` folder, both in raw `data` and `visual` formats - each on their respective subfolders. We also provide a summary file for all the runs.
