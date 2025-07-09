@@ -17,6 +17,12 @@ SUM:                            19            630            287           2010
 
 ```
 
+In addition, SeQTO is able to visualize the results, highlighting objective minimization via Pareto Front.
+
+For Example (EfficientNet-Lite4, deployed using TVM on a Mali GPU, using Static Quantization):
+
+![Visual](https://github.com/luludak/SeQTO/blob/main/results/visual/d111689907c06eea7c82e4833ddef758da6453b9d4cf60b7e99ca05c7cbd9c12_efficientnet-lite4-11_upd_tvm_static_out_new.jpg)
+
 ## Installation
 Install necessary packages using `pip`, by doing `pip install -r requirements.txt`.
 If you want to run your model in TVM, you will need to compile TVM passing the necessary flags for the backend required (e.g., OpenCL). More instructions can be found [here](https://tvm.apache.org/docs/install/from_source.html).
