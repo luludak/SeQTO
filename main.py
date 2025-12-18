@@ -34,6 +34,8 @@ import numpy as np
 
 from argparse import ArgumentParser
 
+np.float_ = np.float64
+
 def _generate_aug_model_path(model_path: str) -> str:
     aug_model_path = (
         model_path[: -len(".onnx")] if model_path.endswith(".onnx") else model_path
