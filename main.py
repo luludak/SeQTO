@@ -1,3 +1,6 @@
+import numpy as np
+np.float_ = np.float64
+
 import os
 import argparse
 import onnx
@@ -19,7 +22,6 @@ from helpers.model_helper import get_size
 from helpers.value_helper import ValueHelper
 from onnx import version_converter
 from onnx import hub
-import numpy as np
 import random
 
 from readers import input_reader
@@ -33,8 +35,6 @@ from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 import numpy as np
 
 from argparse import ArgumentParser
-
-np.float_ = np.float64
 
 def _generate_aug_model_path(model_path: str) -> str:
     aug_model_path = (
