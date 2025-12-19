@@ -28,7 +28,7 @@
     "onnx": {
         "threshold": 0,
         "preprocess_model": false,
-        "quantize_static": false
+        "quantize_static": true
     },
     "options": {
         "preprocessing_setting": "imagenet",
