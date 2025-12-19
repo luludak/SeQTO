@@ -11,7 +11,7 @@ For Example (EfficientNet-Lite4, deployed using TVM on a Mali GPU, using Static 
 ![Visual](https://github.com/luludak/SeQTO/blob/main/results/visual/d111689907c06eea7c82e4833ddef758da6453b9d4cf60b7e99ca05c7cbd9c12_efficientnet-lite4-11_upd_tvm_static_out_new.jpg)
 
 ## Installation
-Install necessary packages using `pip`, by doing `pip install -r requirements.txt`.
+Install necessary packages using `pip`, by doing `pip install -r requirements.txt`. Important: the system is tested using `Python 3.10`, which is the recommended version.
 If you want to run your model in TVM, you will need to compile TVM passing the necessary flags for the backend required (e.g., OpenCL). More instructions can be found [here](https://tvm.apache.org/docs/install/from_source.html).
 In addition, if you want to run on Android devices, follow the [TVM tutorial](https://tvm.apache.org/docs//v0.15.0/how_to/deploy_models/deploy_model_on_android.html) for that purpose.
 
@@ -20,7 +20,7 @@ Run by doing `python main.py`. This will run the system without visualization fe
 You can also setup the system in the `config.json` file.
 
 To visualize the results, pass the following arguments.
-`-v / --visualize <runs_folder_path>`: Visualize data from file.
+`-v/--visualize <runs_folder_path>`: Visualize data from file.
     
 `-s/-save_only`: Visualize and save figures (no show).
 
@@ -54,3 +54,7 @@ SUM:                            19            630            287           2010
 
 ## Results
 The results of our experiments can be found in the `results` folder, both in raw `data` and `visual` formats - each on their respective subfolders. We also provide a summary file for all the runs.
+
+## Notes
+Any sample dataset images provided in the repository are sourced from the internet, and their copyright(s) belong to their owner(s). The only reason of provision is purely for non-commercial, demonstration purposes of DiTOX (to showcase how it works), with respect to the copyright(s) of their owner(s) and no intention to infringe them.
+
