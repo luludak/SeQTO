@@ -35,8 +35,9 @@ To visualize the results, pass the following arguments.
 
 `-s/-show_only`: Visualize and show figures (no save).
 
-SeQTO should behabe as follows: After determining the selective quantization order (by performing analysis for error-prone layers), SeQTO will then fully quantize the model, and perform differential testing in comparison to the original, non-quantized model, for specific metrics (e.g., accuracy, model size). It then should start applying an iteration, where it excludes model layers from the quantization process upon each cycle, while measuring and keeping automatically the metrics of interest compared to the original, non-quantized model.
-Once all layers are excluded or accuracy difference reaches zero in comparison to the original model, the process completes and a JSON report is generated, which can then be used in order to visualize the results. Also, Pareto Front is calculated.
+After determining the selective quantization order by analyzing error-prone layers, SeQTO fully quantizes the model and performs differential testing against the original non-quantized model using metrics such as accuracy and model size. It then enters an iterative process in which it progressively excludes layers from quantization, one cycle at a time, while automatically recording the selected metrics relative to the original model.
+
+The process completes when all layers have been excluded or when the accuracy difference reaches zero compared to the original model. Upon completion, SeQTO generates a JSON report for result visualization, while also compiuting and visualizing the top-3 Pareto-optimal solutions.
 
 ## Configuration
 The tool can be configured by updating the values in `config.json` file. By setting `run_type` to ONNX the models will be deployed on CPU, while setting `tvm` will attempt compilation and GPU deployment using Apache TVM
