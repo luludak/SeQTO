@@ -37,7 +37,7 @@
     },
     "images": {
         "note": "Download your own datasets and create your own images folders.",
-        "images_folder_rel_path": "/images/imagenet/",
+        "images_folder_rel_path": "/images/dataset/",
         "calibration_images_rel_path": "/images/fifty/",
         "small_calibr_images_folder_rel_path": "/images/thirty/",
         "random_enabled": true,
