@@ -4,11 +4,19 @@ SeQTO allows the fetching of models via the ONNX Model hub of via local file. In
 
 ![SeQTO](https://github.com/luludak/SeQTO/blob/main/SeQTO.png)
 
+## Purpose
 
-In addition, SeQTO is able to visualize the results, highlighting objective minimization via Pareto Front.
-For Example (EfficientNet-Lite4, deployed using TVM on a Mali GPU, using Static Quantization):
+The primary purpose of SeQTO is to support multi objective task minimization by enabling selective quantization of ONNX models for both CPU and GPU targets. SeQTO analyzes model layers using error metrics to identify those most likely to negatively impact outcomes such as accuracy degradation. Based on this ranking, it applies selective quantization incrementally, quantizing one layer per cycle while accumulating prior changes, and profiles the effect of each cycle on metrics such as accuracy and model size. This process helps users identify which layers contribute most effectively to quantization while minimizing undesired side effects, particularly accuracy loss. In addition, SeQTO is able to visualize the results, highlighting objective minimization via Pareto Front. For Example (EfficientNet-Lite4, deployed using TVM on a Mali GPU, using Static Quantization):
 
 ![Visual](https://github.com/luludak/SeQTO/blob/main/results/visual/d111689907c06eea7c82e4833ddef758da6453b9d4cf60b7e99ca05c7cbd9c12_efficientnet-lite4-11_upd_tvm_static_out_new.jpg)
+
+## Features
+- Support of ONNX models being deployed on CPUs (via ONNX Runtime) and GPUs (via Apache TVM) - including mobile devices.
+- Support of both static and dynamic quantization.
+- Automatic visual profiling of results.
+- Multi-objective Pareto Front profiling, currently supporting accuracy, model size and execution times.
+- Automatic model fetching from the official ONNX Model Hub.
+- Support of chunking runs, allowing the completion of demanding results upon unstable setups (e.g., RPC communication with a mobile GPU).
 
 ## Installation
 Install necessary packages using `pip`, by doing `pip install -r requirements.txt`. Important: the system is tested using `Python 3.10`, which is the recommended version.
