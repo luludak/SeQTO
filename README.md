@@ -12,11 +12,12 @@ The primary purpose of SeQTO is to support multi objective task minimization by 
 
 ## Features
 - Support of ONNX models being deployed on CPUs (via ONNX Runtime) and GPUs (via Apache TVM) - including mobile devices.
-- Support of both static and dynamic quantization.
-- Automatic visual profiling of results.
-- Multi-objective Pareto Front profiling, currently supporting accuracy, model size and execution times.
+- Support of both static and dynamic model quantization.
 - Automatic model fetching from the official ONNX Model Hub.
+- Automatic model analysis to determine potentially error-prone layers upon model quantization.
 - Support of chunking runs, allowing the completion of demanding results upon unstable setups (e.g., RPC communication with a mobile GPU).
+- Automatic visual profiling of the generated results.
+- Multi-objective Pareto Front profiling, currently supporting accuracy, model size and execution times.
 
 ## Installation
 Install necessary packages using `pip`, by doing `pip install -r requirements.txt`. Important: the system is tested using `Python 3.10`, which is the recommended version.
@@ -33,6 +34,9 @@ To visualize the results, pass the following arguments.
 `-s/-save_only`: Visualize and save figures (no show).
 
 `-s/-show_only`: Visualize and show figures (no save).
+
+SeQTO should behabe as follows: After determining the selective quantization order (by performing analysis for error-prone layers), SeQTO will then fully quantize the model, and perform differential testing in comparison to the original, non-quantized model, for specific metrics (e.g., accuracy, model size). It then should start applying an iteration, where it excludes model layers from the quantization process upon each cycle, while measuring and keeping automatically the metrics of interest compared to the original, non-quantized model.
+Once all layers are excluded or accuracy difference reaches zero in comparison to the original model, the process completes and a JSON report is generated, which can then be used in order to visualize the results. Also, Pareto Front is calculated.
 
 ## Configuration
 The tool can be configured by updating the values in `config.json` file. By setting `run_type` to ONNX the models will be deployed on CPU, while setting `tvm` will attempt compilation and GPU deployment using Apache TVM
