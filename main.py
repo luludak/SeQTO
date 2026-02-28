@@ -186,6 +186,8 @@ def main():
 
     # Generic config.
     config = load_config('./config.json')
+    if config["run_type"] == "tvm":
+        raise Exception("TVM is not installed, but it is enabled in configuration. Please install TVM.")
     parser = ArgumentParser()
 
     parser.add_argument("-v", "--visualize", dest="visualize",
@@ -516,7 +518,7 @@ def main():
                     base_model_out.update(result["output"])
                     base_model_times.update(result["times"])
                     base_times_list.extend(list(result["times"].values())[1:])
-                else:
+                elif TVM_INSTALLED:
                     model_config["model_path"] = float_tvm_path
                     model_config["graph_path"] = graph_path
                     model_config["params_path"] = params_path
@@ -530,6 +532,9 @@ def main():
                     base_model_out.update(result["output"])
                     base_model_times.update(result["times"])
                     base_times_list.extend(list(result["times"].values())[1:])
+                else:
+                    raise Exception("Could not run with current configuration. Make sure the correct options are defined" \
+                    "and that you have installed all appropriate dependencies.")
 
                 start = start + images_chunk
                 end = end + images_chunk
