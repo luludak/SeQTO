@@ -25,8 +25,18 @@ from onnx import hub
 import random
 
 from readers import input_reader
-from builders.tvm_builder import TVMBuilder
-from runners.tvm_runner import TVMRunner
+TVM_INSTALLED = True
+try:
+  import tvm
+except:
+    print("Warning: TVM is not installed. If you wish to use it for your experiments, please install it.")
+    print("For that matter, follow instructions at: https://tvm.apache.org/")
+    TVM_INSTALLED = False
+
+if TVM_INSTALLED:
+    from builders.tvm_builder import TVMBuilder
+    from runners.tvm_runner import TVMRunner
+
 from runners.onnx_runner import ONNXRunner
 
 import matplotlib.pyplot as plt
@@ -314,8 +324,9 @@ def main():
     build = config["tvm"]["devices"][device_name]
 
     # RPC Setup
-
-    tvm_runner = TVMRunner(build)
+    tvm_runner = None
+    if TVM_INSTALLED:
+        tvm_runner = TVMRunner(build)
     onnx_runner = ONNXRunner({})
 
     value_helper = ValueHelper()
@@ -380,9 +391,13 @@ def main():
     else:
         models_to_run = [script_dir + "/local_models/" + m for m in listdir(script_dir + "/local_models") if m.endswith(".onnx") and "_quant" not in m]
         models_config = [load_config(m) for m in models_to_run]
-    for i, model_to_run in enumerate(models_to_run):
-        
+    
+    tvm_builder = None
+    if TVM_INSTALLED:
         tvm_builder = TVMBuilder({"build": build})
+    
+    for i, model_to_run in enumerate(models_to_run):
+          
         float_model_path = model_to_run
 
         # Load model so that it can be found locally.
@@ -482,7 +497,7 @@ def main():
             # Preprocess, then use this version.
 
             float_pre_model_path = float_model_path
-            if run_type == "tvm":
+            if run_type == "tvm" and TVM_INSTALLED:
                 tvm_path = os.path.dirname(float_pre_model_path)
                 (float_tvm_path, graph_path, params_path) = tvm_builder.build_tvm(float_pre_model_path, tvm_path, shape)
                 
@@ -701,7 +716,7 @@ def main():
             if not skip_execution:
                 
                 # Rebuild new TVM instance.
-                if run_type == "tvm":
+                if run_type == "tvm" and TVM_INSTALLED:
                     tvm_path = os.path.dirname(new_quant_model_path)
                     (new_tvm_model_path, new_graph_path, new_params_path) = tvm_builder.build_tvm(new_quant_model_path, tvm_path, shape)
                 
