@@ -53,7 +53,7 @@ To visualize the results, pass the following arguments.
     
 `-s/-save_only`: Visualize and save figures (no show).
 
-`-s/-show_only`: Visualize and show figures (no save).
+`-so/-show_only`: Visualize and show figures (no save).
 
 After determining the selective quantization order by analyzing error-prone layers, SeQTO fully quantizes the model and performs differential testing against the original non-quantized model using metrics such as accuracy and model size. It then enters an iterative process in which it progressively excludes layers from quantization, one cycle at a time, while automatically recording the selected metrics relative to the original model.
 
