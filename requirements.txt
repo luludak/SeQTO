@@ -26,7 +26,6 @@ js==1.0
 keras==3.12.1
 keyring==25.7.0
 matplotlib==3.10.8
-
 onnxruntime==1.19.2
 Pillow==12.1.1
 pymoo==0.6.1.6
